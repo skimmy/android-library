@@ -6,6 +6,15 @@ import com.skimmy.androidutillibrary.filesystem.exceptions.FilesystemMismatchExc
 
 import android.os.Environment;
 
+/**
+ * 
+ * This class contains utility methods to access the file-system of the device.
+ * The most frequent operations (like opening a file, creating a directory, ...)
+ * are performed by some of the class methods.
+ * 
+ * @author Michele Schimd 
+ *
+ */
 public class AndroidFileHelper {
 
 	/**

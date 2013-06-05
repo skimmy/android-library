@@ -4,6 +4,7 @@ import java.io.File;
 
 import com.skimmy.androidutillibrary.filesystem.exceptions.FilesystemMismatchException;
 
+import android.content.Context;
 import android.os.Environment;
 
 /**
@@ -12,8 +13,8 @@ import android.os.Environment;
  * The most frequent operations (like opening a file, creating a directory, ...)
  * are performed by some of the class methods.
  * 
- * @author Michele Schimd 
- *
+ * @author Michele Schimd
+ * 
  */
 public class AndroidFileHelper {
 
@@ -29,9 +30,9 @@ public class AndroidFileHelper {
 	 * 
 	 * @see #getOrCreateDirectory(String, boolean)
 	 */
-	public static File getOrCreateDirectory(String name)
+	public static File getOrCreateDirectory(Context ctx, String name)
 			throws FilesystemMismatchException {
-		return getOrCreateDirectory(name, true);
+		return getOrCreateDirectory(ctx, name, true);
 	}
 
 	/**
@@ -52,16 +53,17 @@ public class AndroidFileHelper {
 	 * 
 	 * @see #getOrCreateDirectory(String)
 	 */
-	public static File getOrCreateDirectory(String name, boolean sdCard)
+	public static File getOrCreateDirectory(Context ctx, String name, boolean sdCard)
 			throws FilesystemMismatchException {
 		File directory = null;
-		File sdCardDir = Environment.getExternalStorageDirectory();
+
+		String sdState = Environment.getExternalStorageState();
 		// First try the SD Card directory if flag is set
-		if (sdCard && sdCardDir != null && sdCardDir.exists()) {
-			directory = new File(sdCardDir, name);
+		if (sdCard && sdState.equals(Environment.MEDIA_MOUNTED)) {
+			directory = descriptorFromSdCard(name);
 		} else {
 			// there is no SD card available
-			directory = new File(name);
+			directory = descriptorFromInternalStorage(ctx, name);
 		}
 
 		// if the directory does not exist create it
@@ -75,5 +77,15 @@ public class AndroidFileHelper {
 					"Requested directory is indeed a file");
 		}
 		return directory;
+	}
+
+	private static File descriptorFromSdCard(String path) {
+		File sdRoot = Environment.getExternalStorageDirectory();
+		return new File(sdRoot, path);
+	}
+	
+	private static File descriptorFromInternalStorage(Context ctx, String path) {
+		File root = ctx.getFilesDir();
+		return new File(root, path);
 	}
 }

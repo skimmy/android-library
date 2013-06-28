@@ -53,8 +53,8 @@ public class AndroidFileHelper {
 	 * 
 	 * @see #getOrCreateDirectory(String)
 	 */
-	public static File getOrCreateDirectory(Context ctx, String name, boolean sdCard)
-			throws FilesystemMismatchException {
+	public static File getOrCreateDirectory(Context ctx, String name,
+			boolean sdCard) throws FilesystemMismatchException {
 		File directory = null;
 
 		String sdState = Environment.getExternalStorageState();
@@ -79,13 +79,35 @@ public class AndroidFileHelper {
 		return directory;
 	}
 
+	/**
+	 * Returns a {@link File} descriptor for a file with the given
+	 * <code>fileName</code> on the <em>cache</em> directory. This is
+	 * particularly useful to obtain files that stores little information that
+	 * may be shared between different execution of the same app (<em>e.g.</em>
+	 * ui content, small images, ...)
+	 * 
+	 * @param ctx
+	 *            the context of the app
+	 * @param fileName
+	 *            the name of the file to be created/opened
+	 * @return a {@link File} descriptor to the requested file
+	 */
+	public static File createFileForCacheDirectory(Context ctx, String fileName) {
+		return descriptorFromCacheDirectory(ctx, fileName);
+	}
+
 	private static File descriptorFromSdCard(String path) {
 		File sdRoot = Environment.getExternalStorageDirectory();
 		return new File(sdRoot, path);
 	}
-	
+
 	private static File descriptorFromInternalStorage(Context ctx, String path) {
 		File root = ctx.getFilesDir();
 		return new File(root, path);
+	}
+
+	private static File descriptorFromCacheDirectory(Context ctx, String path) {
+		File cacheRoot = ctx.getCacheDir();
+		return new File(cacheRoot, path);
 	}
 }
